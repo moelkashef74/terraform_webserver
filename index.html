@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Course Notes</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0f0f0f;color:#e5e5e5;padding:2rem;max-width:860px;margin:auto}
+h1{font-size:26px;font-weight:600;margin-bottom:4px}
+.subtitle{color:#888;font-size:14px;margin-bottom:1.5rem}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem}
+.filter-btn{font-size:13px;padding:5px 14px;border-radius:8px;border:1px solid #333;background:#1a1a1a;color:#aaa;cursor:pointer;transition:all 0.15s}
+.filter-btn.active,.filter-btn:hover{background:#2a2a2a;color:#fff;border-color:#555}
+.topic-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;cursor:pointer}
+.card-header:hover{background:#222}
+.card-title{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:500}
+.cat-pill{font-size:11px;padding:2px 9px;border-radius:6px;font-weight:400}
+.cat-compute{background:#1a3a5c;color:#7ab3e0}
+.cat-storage{background:#1a3a1a;color:#7ac47a}
+.cat-network{background:#2a1a4a;color:#a07ae0}
+.cat-security{background:#3a2a1a;color:#e0b07a}
+.cat-monitor{background:#1a3a3a;color:#7ae0d4}
+.cat-db{background:#3a1a2a;color:#e07ab0}
+.chevron{font-size:18px;color:#666;transition:transform 0.2s;display:inline-block}
+.chevron.open{transform:rotate(180deg)}
+.card-body{display:none;padding:0 1.25rem 1.25rem;border-top:1px solid #2a2a2a}
+.card-body.open{display:block}
+.summary-line{font-size:14px;color:#aaa;margin:1rem 0 0.75rem;line-height:1.6}
+.section-label{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.06em;margin:1rem 0 0.5rem}
+.key-points{list-style:none;display:flex;flex-direction:column;gap:7px}
+.key-points li{font-size:14px;color:#ccc;line-height:1.6;padding-left:1.1rem;position:relative}
+.key-points li::before{content:"•";position:absolute;left:0;color:#555}
+.key-points li strong{color:#fff}
+table.use-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:0.25rem}
+table.use-table th{font-weight:500;padding:7px 10px;text-align:left;background:#222;font-size:12px;color:#aaa}
+table.use-table td{padding:7px 10px;border-top:1px solid #2a2a2a;color:#ccc;vertical-align:top;line-height:1.5}
+table.use-table th:first-child,table.use-table td:first-child{color:#7ac47a}
+table.use-table th:last-child,table.use-table td:last-child{color:#e07a7a}
+.callout{border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.7;margin-top:0.25rem;border-left:3px solid}
+.callout-memory{background:#1e1e2e;border-color:#7f77dd;color:#ccc}
+.callout-trap{background:#2e1e0e;border-color:#ef9f27;color:#ccc}
+.recap-q{display:flex;flex-direction:column;gap:8px;margin-top:0.25rem}
+.recap-item{font-size:13px;color:#aaa;padding:9px 12px;background:#222;border-radius:8px;line-height:1.5;cursor:pointer;border:1px solid #2a2a2a}
+.recap-item:hover{background:#2a2a2a;color:#fff}
+.recap-item span{font-weight:600;color:#7ab3e0}
+</style>
+</head>
+<body>
+
+<h1>☁️ AWS Course Notes</h1>
+<p class="subtitle">12 topics · Click any card to expand · Filter by category</p>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterCards('all',this)">All</button>
+  <button class="filter-btn" onclick="filterCards('compute',this)">Compute</button>
+  <button class="filter-btn" onclick="filterCards('network',this)">Networking</button>
+  <button class="filter-btn" onclick="filterCards('storage',this)">Storage</button>
+  <button class="filter-btn" onclick="filterCards('security',this)">Security</button>
+  <button class="filter-btn" onclick="filterCards('monitor',this)">Monitoring</button>
+  <button class="filter-btn" onclick="filterCards('db',this)">Databases</button>
+</div>
+
+<div id="cards">
+
+<div class="topic-card" data-cat="network">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">☁️ Cloud Computing Basics <span class="cat-pill cat-network">Fundamentals</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">Cloud = infrastructure + automation + orchestration, billed by usage (OpEx) instead of upfront purchase (CapEx).</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li><strong>On-premises / Data center</strong>: you own and manage all hardware — CapEx model (pay upfront)</li>
+      <li><strong>Private cloud</strong>: your own rack with automation &amp; orchestration tools — still CapEx</li>
+      <li><strong>Public cloud</strong>: shared resources owned by provider (AWS) — OpEx model (pay-as-you-go)</li>
+      <li><strong>IaaS / PaaS / SaaS</strong>: layers of how much AWS manages vs you manage</li>
+      <li><strong>XaaS</strong>: "Anything as a Service" — storage, network, hardware all rentable</li>
+    </ul>
+    <div class="section-label">When to Use Each</div>
+    <table class="use-table"><thead><tr><th>✅ Use public cloud when</th><th>❌ Use on-premises when</th></tr></thead><tbody>
+      <tr><td>You want to avoid large upfront costs</td><td>You have strict data sovereignty laws</td></tr>
+      <tr><td>Workloads are unpredictable or seasonal</td><td>Workloads are very stable and predictable</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">Think of public cloud like electricity — you don't build a power plant, you just pay for what you use each month.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> What is the difference between CapEx and OpEx?</div>
+      <div class="recap-item"><span>Q2.</span> Name the 3 cloud service models (IaaS, PaaS, SaaS) and what each manages.</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="security">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">🔐 IAM — Identity & Access Management <span class="cat-pill cat-security">Security</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">IAM controls who can access AWS and what they are allowed to do — it is global across all regions.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li><strong>Root user</strong>: the account owner — full access, should be locked away after initial setup</li>
+      <li><strong>IAM user</strong>: a named identity with specific permissions you define</li>
+      <li>4 ways to access AWS: <strong>Console</strong> (password), <strong>Programmatic</strong> (access key + secret key), <strong>IAM Roles</strong> (temporary sessions), <strong>APIs</strong></li>
+      <li>Permissions use <strong>explicit permit / implicit deny</strong>: no matching rule = denied</li>
+      <li>Policies are written in <strong>JSON</strong> format</li>
+      <li>IAM is a <strong>global service</strong> — not locked to any region, unlike VPC</li>
+    </ul>
+    <div class="section-label">When to Use It</div>
+    <table class="use-table"><thead><tr><th>✅ Use IAM roles when</th><th>❌ Don't use root user when</th></tr></thead><tbody>
+      <tr><td>Granting temporary access to services or users</td><td>Doing everyday tasks — create an IAM user instead</td></tr>
+      <tr><td>EC2 needs to call other AWS services</td><td>Sharing access with a team member</td></tr>
+    </tbody></table>
+    <div class="section-label">⚠️ Common Exam Trap</div>
+    <div class="callout callout-trap"><strong>Trap:</strong> IAM is global, but VPC is regional. Students often mix these up. Also remember: security groups only have permit rules — there are NO explicit deny rules in a security group (that's NACLs).</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> What are the 4 ways to access AWS?</div>
+      <div class="recap-item"><span>Q2.</span> What is the difference between an IAM user and an IAM role?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="network">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">🏙️ VPC — Virtual Private Cloud <span class="cat-pill cat-network">Networking</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">A VPC is your own isolated virtual data center inside a specific AWS region.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li>Isolated from other VPCs and other AWS customers</li>
+      <li>Confined to <strong>one region</strong> — unlike IAM which is global</li>
+      <li>Connect to on-premises data center via <strong>VGW (Virtual Gateway)</strong></li>
+      <li><strong>AWS Direct Connect</strong>: dedicated physical line → high performance</li>
+      <li><strong>VPN</strong>: encrypted tunnel over internet → high security</li>
+      <li>Subnets live inside a VPC within a specific <strong>AZ (Availability Zone)</strong></li>
+    </ul>
+    <div class="section-label">Connection Options</div>
+    <table class="use-table"><thead><tr><th>✅ Use Direct Connect when</th><th>✅ Use VPN when</th></tr></thead><tbody>
+      <tr><td>You need consistent, high-speed throughput</td><td>You need encrypted, secure connection</td></tr>
+      <tr><td>Transferring large volumes of data regularly</td><td>Cost is a concern and speed is acceptable</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">Think of a VPC like a fenced-off section of a big warehouse — your stuff is in there, nobody else can get in without your permission.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> What is the difference between Direct Connect and VPN?</div>
+      <div class="recap-item"><span>Q2.</span> Is VPC regional or global? What about IAM?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="compute">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">🖥️ EC2 — Elastic Compute Cloud <span class="cat-pill cat-compute">Compute</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">EC2 gives you a resizable virtual machine in the cloud — your "server" that you can start, stop, and resize.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li><strong>Shared host</strong>: your VM shares the physical server with other AWS customers (cheapest)</li>
+      <li><strong>Dedicated host</strong>: entire physical server is yours alone (for licensing/compliance)</li>
+      <li>Connect to Linux instances via <strong>SSH (Secure Shell)</strong></li>
+      <li>EC2 lives inside a subnet, connected via <strong>ENI (Elastic Network Interface)</strong></li>
+      <li>Protected by a <strong>Security Group</strong> acting as a virtual firewall</li>
+    </ul>
+    <div class="section-label">Shared vs Dedicated</div>
+    <table class="use-table"><thead><tr><th>✅ Use shared when</th><th>✅ Use dedicated host when</th></tr></thead><tbody>
+      <tr><td>General workloads, cost sensitive</td><td>Software licensing tied to physical cores/sockets</td></tr>
+      <tr><td>Dev/test environments</td><td>Strict compliance requirements (HIPAA, PCI)</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">EC2 = a computer in the cloud. "Elastic" means you can resize it up or down without buying new hardware.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> What is the difference between a shared host and a dedicated host in EC2?</div>
+      <div class="recap-item"><span>Q2.</span> What is an ENI and what role does it play?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="security">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">🧱 Security Groups & NACLs <span class="cat-pill cat-security">Security</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">Two layers of firewall — Security Groups protect individual instances, NACLs protect entire subnets.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li>Security groups are <strong>stateful</strong>: if inbound is allowed, the outbound response is automatically allowed</li>
+      <li>Security groups have <strong>permit rules only</strong> — no explicit deny; no matching rule = implicit deny</li>
+      <li>Inbound rules use <strong>source IP + destination port</strong></li>
+      <li><strong>NACLs</strong> operate at the subnet level, applied at the implied router</li>
+      <li>NACLs are <strong>stateless</strong>: you must explicitly allow both inbound AND outbound</li>
+      <li>NACLs support both <strong>permit and deny</strong> rules</li>
+    </ul>
+    <div class="section-label">Security Group vs NACL</div>
+    <table class="use-table"><thead><tr><th>Security Group</th><th>NACL</th></tr></thead><tbody>
+      <tr><td>Instance level (ENI)</td><td>Subnet level</td></tr>
+      <tr><td>Stateful</td><td>Stateless</td></tr>
+      <tr><td>Permit rules only</td><td>Permit + deny rules</td></tr>
+    </tbody></table>
+    <div class="section-label">⚠️ Common Exam Trap</div>
+    <div class="callout callout-trap"><strong>Trap:</strong> Security groups are stateful (return traffic auto-allowed). NACLs are stateless (you must allow both directions manually). This is one of the most tested AWS exam concepts.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> What does "stateful" mean in the context of a security group?</div>
+      <div class="recap-item"><span>Q2.</span> Can a security group explicitly deny traffic? What about a NACL?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="storage">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">💾 Block Storage — EBS & Instance Store <span class="cat-pill cat-storage">Storage</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">Two types of disk for EC2 — EBS is persistent and detachable, Instance Store is faster but lost on stop/terminate.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li><strong>EBS</strong>: volume lives outside the physical server, within the same AZ, connected via ENI</li>
+      <li>EBS holds the <strong>operating system</strong> — persists when instance stops</li>
+      <li><strong>Instance Store</strong>: volume is inside the same physical server — extremely fast</li>
+      <li>Instance Store is <strong>ephemeral (volatile)</strong> — data is lost when instance stops or terminates</li>
+    </ul>
+    <div class="section-label">EBS vs Instance Store</div>
+    <table class="use-table"><thead><tr><th>✅ Use EBS when</th><th>✅ Use Instance Store when</th></tr></thead><tbody>
+      <tr><td>Data must survive reboots/stops</td><td>You need maximum speed (temp data, cache)</td></tr>
+      <tr><td>You need to detach and reattach storage</td><td>Data can be recreated easily if lost</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">EBS = external hard drive plugged into your PC (survives unplugging). Instance Store = RAM drive — blazing fast, but data gone when power is off.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> What happens to Instance Store data when an EC2 instance is stopped?</div>
+      <div class="recap-item"><span>Q2.</span> Where does an EBS volume sit relative to the EC2 instance?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="storage">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">🪣 S3 — Simple Storage Service <span class="cat-pill cat-storage">Storage</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">S3 is object storage — store any file via a web interface in containers called Buckets, outside your VPC.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li>Storage type is <strong>object storage</strong> (not block) — stores files as whole objects with metadata</li>
+      <li>Storage container is called a <strong>Bucket</strong></li>
+      <li>Data exists within one region but <strong>outside the VPC</strong></li>
+      <li>Accessed via a web service interface (HTTP/HTTPS)</li>
+      <li>Permissions use <strong>explicit</strong> (rule exists in policy) and <strong>implicit</strong> (no rule = deny) logic</li>
+    </ul>
+    <div class="section-label">When to Use It</div>
+    <table class="use-table"><thead><tr><th>✅ Use S3 when</th><th>❌ Don't use S3 when</th></tr></thead><tbody>
+      <tr><td>Storing files, images, backups, logs</td><td>You need a file system mounted to an OS</td></tr>
+      <tr><td>Hosting static websites</td><td>You need low-latency block storage for a database</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">S3 = a Google Drive for AWS. Drop files in buckets, access them from anywhere over the internet.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> What is the difference between block storage and object storage?</div>
+      <div class="recap-item"><span>Q2.</span> Does S3 live inside or outside the VPC?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="network">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">🌐 CloudFront & Route 53 <span class="cat-pill cat-network">Networking</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">CloudFront is AWS's CDN that caches content at edge locations globally. Route 53 is AWS's DNS service.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li><strong>CloudFront</strong> connects edge locations to S3 buckets via high-speed links</li>
+      <li>Edge locations <strong>cache</strong> content — no full data duplication needed</li>
+      <li>Using an edge location is <strong>cheaper and faster</strong> than users hitting the S3 bucket directly</li>
+      <li><strong>Route 53</strong> is the DNS (Domain Name System) service for AWS — translates domain names to IPs</li>
+    </ul>
+    <div class="section-label">When to Use CloudFront</div>
+    <table class="use-table"><thead><tr><th>✅ Use CloudFront when</th><th>❌ Skip it when</th></tr></thead><tbody>
+      <tr><td>Serving content to global users</td><td>All your users are in a single region</td></tr>
+      <tr><td>Reducing latency for static assets</td><td>Content changes too frequently to cache</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">CloudFront = photocopying a document and putting copies in local post offices. Users pick up nearby instead of going to HQ every time.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> Why is using a CloudFront edge location cheaper than hitting S3 directly?</div>
+      <div class="recap-item"><span>Q2.</span> What does Route 53 do?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="security">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">🔑 KMS — Key Management Service <span class="cat-pill cat-security">Security</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">KMS manages encryption keys for your AWS data — it is a regional service.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li>KMS is responsible for <strong>encryption</strong> across AWS services</li>
+      <li>It is a <strong>regional service</strong> — keys in one region cannot be used in another</li>
+      <li>Primary resource = <strong>CMK (Customer Master Key)</strong></li>
+      <li><strong>AWS-managed CMK</strong>: created, managed, and used by AWS on your behalf</li>
+      <li><strong>Customer-managed CMK</strong>: you create, manage, and control it yourself</li>
+    </ul>
+    <div class="section-label">AWS-managed vs Customer-managed</div>
+    <table class="use-table"><thead><tr><th>AWS-managed CMK</th><th>Customer-managed CMK</th></tr></thead><tbody>
+      <tr><td>No setup needed — AWS handles it</td><td>You control rotation, policies, and deletion</td></tr>
+      <tr><td>Less control</td><td>Required for strict compliance needs</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">KMS = a keychain. AWS holds some keys for you automatically, but you can also bring and manage your own keys.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> Is KMS regional or global?</div>
+      <div class="recap-item"><span>Q2.</span> What is the difference between AWS-managed and customer-managed CMK?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="db">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">🗄️ RDS & OLTP vs OLAP <span class="cat-pill cat-db">Databases</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">RDS is AWS's managed relational database service — designed for OLTP (transactional) workloads, not analytics.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li><strong>RDS</strong> lives inside your VPC — best placed in a <strong>private subnet</strong></li>
+      <li>Can be fully managed by AWS or self-managed on EC2</li>
+      <li>Can run standalone or with a <strong>standby replica in another AZ</strong> for high availability</li>
+      <li><strong>OLTP</strong>: small fast queries, CRUD operations, fixed schema (RDS fits here)</li>
+      <li><strong>OLAP</strong>: complex analytical/reporting queries — use Redshift instead</li>
+    </ul>
+    <div class="section-label">OLTP vs OLAP</div>
+    <table class="use-table"><thead><tr><th>OLTP (RDS)</th><th>OLAP (Redshift)</th></tr></thead><tbody>
+      <tr><td>Small, fast queries</td><td>Large, complex queries</td></tr>
+      <tr><td>Day-to-day operations (orders, users)</td><td>Reporting and business intelligence</td></tr>
+      <tr><td>Fixed schema required</td><td>Handles flexible large datasets</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">OLTP = cashier scanning items one at a time. OLAP = accountant reviewing the whole year's sales in one big report.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> Should RDS be in a public or private subnet, and why?</div>
+      <div class="recap-item"><span>Q2.</span> What is the difference between OLTP and OLAP?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="monitor">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">📊 CloudWatch <span class="cat-pill cat-monitor">Monitoring</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">CloudWatch is the central monitoring hub in AWS — it collects metrics and performance data for your resources.</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li>CloudWatch is the <strong>center of monitoring and visibility</strong> in AWS</li>
+      <li>It is a <strong>metric data repository</strong> — collects numbers (CPU %, network in/out, disk, etc.)</li>
+      <li>Focuses on one resource at a time — you define what to monitor</li>
+      <li>Can trigger <strong>alarms and auto-scaling actions</strong> based on thresholds</li>
+    </ul>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">CloudWatch = the dashboard on your car — shows speed, fuel, temperature. It doesn't drive for you, it just tells you what's happening.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> What is the difference between CloudWatch and CloudTrail?</div>
+      <div class="recap-item"><span>Q2.</span> What type of data does CloudWatch collect?</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-card" data-cat="monitor">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-title">📋 CloudTrail <span class="cat-pill cat-monitor">Monitoring</span></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="summary-line">CloudTrail logs every API call made in your AWS account — it's your audit trail for "who did what."</p>
+    <div class="section-label">Key Points</div>
+    <ul class="key-points">
+      <li>Records every <strong>API call</strong> made — at the service level</li>
+      <li>Logs can be archived or analyzed by storing them in an <strong>S3 bucket</strong> via CloudTrail Trails</li>
+      <li>Default scope: <strong>all regions</strong>. Can be limited to one region via CLI only</li>
+      <li>Supports <strong>file integrity validation</strong> — detects if logs have been tampered with</li>
+      <li>Different from CloudWatch — CloudTrail = "who did it", CloudWatch = "how is it performing"</li>
+    </ul>
+    <div class="section-label">CloudWatch vs CloudTrail</div>
+    <table class="use-table"><thead><tr><th>CloudWatch</th><th>CloudTrail</th></tr></thead><tbody>
+      <tr><td>Metrics and performance data</td><td>API call history and audit logs</td></tr>
+      <tr><td>"Is my CPU high?"</td><td>"Who deleted that S3 bucket?"</td></tr>
+      <tr><td>Resource-level monitoring</td><td>Account-level activity logging</td></tr>
+    </tbody></table>
+    <div class="section-label">💡 Remember This</div>
+    <div class="callout callout-memory">CloudTrail = CCTV footage for your AWS account. Every action is recorded with a timestamp and who did it.</div>
+    <div class="section-label">Quick Recap Questions</div>
+    <div class="recap-q">
+      <div class="recap-item"><span>Q1.</span> Where are CloudTrail logs typically stored?</div>
+      <div class="recap-item"><span>Q2.</span> What is file integrity validation in CloudTrail and why does it matter?</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function toggle(header){
+  const body=header.nextElementSibling;
+  const chevron=header.querySelector('.chevron');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  chevron.classList.toggle('open',!isOpen);
+}
+function filterCards(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.topic-card').forEach(card=>{
+    card.style.display=(cat==='all'||card.dataset.cat===cat)?'block':'none';
+  });
+}
+</script>
+</body>
+</html>

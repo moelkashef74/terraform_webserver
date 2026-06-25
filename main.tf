@@ -12,6 +12,16 @@ module "ec2" {
   vpc_id             = module.network.vpc_id
   public_subnet_ids  = [module.network.public_subnet_ids[0], module.network.public_subnet_ids[1]]
   private_subnet_ids = [module.network.private_subnet_ids[0], module.network.private_subnet_ids[1]]
+  user_data          = <<-EOF
+                      #!/bin/bash
+                      apt update -y
+                      apt install nginx -y
+                      systemctl start nginx
+                      systemctl enable nginx
+                      cat > /var/www/html/index.html <<'HTML'
+                      ${file("${path.module}/index.html")}
+                      HTML
+                      EOF
 }
 module "sns" {
   source = "./sns"
