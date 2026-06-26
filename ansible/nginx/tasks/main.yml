@@ -1,0 +1,29 @@
+---
+# tasks file for nginx
+- name: Update apt package cache
+  apt:
+    update_cache: yes
+- name: install nginx
+  apt:
+    name: nginx
+    state: latest
+- name: start nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+- name: copy index.html
+  copy:
+    src: index.html
+    dest: /var/www/html/index.html
+- name: Create directory
+  file:
+    path: /var/www/html/ansible
+    state: directory
+    mode: '0755'
+
+- name: override index.html using echo
+  template:
+    src: index.html.j2
+    dest: /var/www/html/ansible/index.html
+  
