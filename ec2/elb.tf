@@ -20,7 +20,7 @@ resource "aws_security_group" "elb_sg" {
 }
 
 resource "aws_lb" "web_alb" {
-  name               = "web-alb"
+  name               = "web-alb-${terraform.workspace}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.elb_sg.id]
@@ -30,7 +30,7 @@ resource "aws_lb" "web_alb" {
 
 }
 resource "aws_lb_target_group" "web_tg" {
-  name     = "web-tg"
+  name     = "web-tg-${terraform.workspace}"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
