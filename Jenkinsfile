@@ -35,14 +35,20 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                sh "terraform plan -var-file=${params.ENVIRONMENT}.tfvars"
+                sh '''
+            terraform plan -out=tfplan -var-file=${ENVIRONMENT}.tfvars | tee plan.out
+            grep "^Plan:" plan.out > plan_summary.txt
+        '''
+        script {
+            env.PLAN_SUMMARY = readFile('plan_summary.txt').trim()
+        }
             }
         }
 
         stage('Review Plan') {
             steps {
                 input(
-                    message: 'Review the Terraform plan in the console output, then click Apply.',
+                    message: """Terraform Plan ${env.PLAN_SUMMARY} Review the full console output if needed, then click Apply.""",
                     ok: 'Apply'
                 )
             }
@@ -56,12 +62,38 @@ pipeline {
     }
 
     post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
+    success {
+        emailext(
+            subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+                <h2>Terraform Pipeline Succeeded</h2>
 
-        failure {
-            echo 'Pipeline failed!'
-        }
+                <p><b>Job:</b> ${env.JOB_NAME}</p>
+                ${env.PLAN_SUMMARY}
+                <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
+                <p><b>Workspace:</b> ${params.ENVIRONMENT}</p>
+
+                <p><a href="${env.BUILD_URL}">Open Build</a></p>
+            """,
+            mimeType: 'text/html',
+            to: 'your@email.com'
+        )
     }
+
+    failure {
+        emailext(
+            subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+                <h2>Terraform Pipeline Failed</h2>
+
+                <p><b>Job:</b> ${env.JOB_NAME}</p>
+                <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
+
+                <p><a href="${env.BUILD_URL}">View Console Output</a></p>
+            """,
+            mimeType: 'text/html',
+            to: 'mhmdalsyd2015@gmail.com'
+        )
+    }
+}
 }
