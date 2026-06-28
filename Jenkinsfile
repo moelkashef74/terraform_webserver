@@ -56,7 +56,7 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                sh "terraform apply \"tfplan\" -auto-approve -var-file=${params.ENVIRONMENT}.tfvars"
+                sh "terraform apply -auto-approve -var-file=${params.ENVIRONMENT}.tfvars tfplan"
             }
         }
     }
