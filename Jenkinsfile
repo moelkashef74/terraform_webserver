@@ -76,7 +76,7 @@ pipeline {
                 <p><a href="${env.BUILD_URL}">Open Build</a></p>
             """,
             mimeType: 'text/html',
-            to: 'your@email.com'
+            to: 'mhmdalsyd2015@gmail.com'
         )
     }
 
