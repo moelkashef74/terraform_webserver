@@ -13,6 +13,7 @@ pipeline {
             description: 'Select the environment'
         )
     }
+    
 
     stages {
 
@@ -21,13 +22,16 @@ pipeline {
                 sh 'terraform init'
             }
         }
-        stages {
-
-        stage('select or create workspace') {
+        stage('Select or Create Workspace') {
             steps {
-                sh 'terraform workspace select ${params.ENVIRONMENT} || terraform workspace new ${params.ENVIRONMENT}'
+                sh """
+                    terraform workspace select ${params.ENVIRONMENT} || \
+                    terraform workspace new ${params.ENVIRONMENT}
+                """
             }
         }
+
+        
 
         stage('Terraform Plan') {
             steps {
@@ -60,5 +64,4 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-}
 }
