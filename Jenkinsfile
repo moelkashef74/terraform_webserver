@@ -37,7 +37,7 @@ pipeline {
             steps {
                 sh '''
             terraform plan -out=tfplan -var-file=${ENVIRONMENT}.tfvars | tee plan.out
-            grep "^Plan:" plan.out > plan_summary.txt
+            grep "Plan:" plan.out > plan_summary.txt
         '''
         script {
             env.PLAN_SUMMARY = readFile('plan_summary.txt').trim()
@@ -81,19 +81,23 @@ pipeline {
     }
 
     failure {
-        emailext(
-            subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            body: """
-                <h2>Terraform Pipeline Failed</h2>
 
-                <p><b>Job:</b> ${env.JOB_NAME}</p>
-                <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
+    echo "Pipeline failed!"
 
-                <p><a href="${env.BUILD_URL}">View Console Output</a></p>
-            """,
-            mimeType: 'text/html',
-            to: 'mhmdalsyd2015@gmail.com'
-        )
-    }
+    emailext(
+        to: 'mhmdalsyd2015@gmail.com',
+        subject: "Build Failed: $${env.JOB_NAME}",
+        body: """Job: $${env.JOB_NAME}
+
+Build Number: $${env.BUILD_NUMBER}
+
+Status: FAILED
+
+Build URL:
+$${env.BUILD_URL}
+"""
+    )
+
+}
 }
 }
