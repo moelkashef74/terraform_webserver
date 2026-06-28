@@ -36,8 +36,7 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 sh '''
-            terraform plan -out=tfplan -var-file=${ENVIRONMENT}.tfvars | tee plan.out
-            grep "Plan:" plan.out > plan_summary.txt
+            terraform plan --var-file=${ENVIRONMENT}.tfvars
         '''
         script {
             env.PLAN_SUMMARY = readFile('plan_summary.txt').trim()
@@ -48,7 +47,7 @@ pipeline {
         stage('Review Plan') {
             steps {
                 input(
-                    message: """Terraform Plan ${env.PLAN_SUMMARY} Review the full console output if needed, then click Apply.""",
+                    message: """Terraform Plan Review the full console output if needed, then click Apply.""",
                     ok: 'Apply'
                 )
             }
@@ -56,7 +55,7 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                sh "terraform apply -auto-approve -var-file=${params.ENVIRONMENT}.tfvars tfplan"
+                sh "terraform apply -auto-approve -var-file=${params.ENVIRONMENT}.tfvars "
             }
         }
     }
@@ -69,7 +68,7 @@ pipeline {
                 <h2>Terraform Pipeline Succeeded</h2>
 
                 <p><b>Job:</b> ${env.JOB_NAME}</p>
-                ${env.PLAN_SUMMARY}
+               
                 <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
                 <p><b>Workspace:</b> ${params.ENVIRONMENT}</p>
 
