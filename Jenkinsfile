@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     environment {
         AWS_ACCESS_KEY_ID     = credentials('access')
         AWS_SECRET_ACCESS_KEY = credentials('secret')
@@ -14,17 +15,19 @@ pipeline {
     }
 
     stages {
-        stage('terraform init') 
+
+        stage('Terraform Init') {
             steps {
                 sh 'terraform init'
             }
         }
 
-        stage('terraform plan') {
+        stage('Terraform Plan') {
             steps {
-                sh 'terraform plan --var-file ${params.ENVIRONMENT}'
+                sh "terraform plan -var-file=${params.ENVIRONMENT}.tfvars"
             }
         }
+
         stage('Review Plan') {
             steps {
                 input(
@@ -33,9 +36,10 @@ pipeline {
                 )
             }
         }
-        stage('terraform apply') {
+
+        stage('Terraform Apply') {
             steps {
-                sh 'terraform apply --var-file ${params.ENVIRONMENT} -auto-approve'
+                sh "terraform apply -auto-approve -var-file=${params.ENVIRONMENT}.tfvars"
             }
         }
     }
@@ -44,8 +48,9 @@ pipeline {
         success {
             echo 'Pipeline completed successfully!'
         }
+
         failure {
             echo 'Pipeline failed!'
         }
     }
-
+}
