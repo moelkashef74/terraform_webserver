@@ -21,6 +21,13 @@ pipeline {
                 sh 'terraform init'
             }
         }
+        stages {
+
+        stage('select or create workspace') {
+            steps {
+                sh 'terraform workspace select ${params.ENVIRONMENT} || terraform workspace new ${params.ENVIRONMENT}'
+            }
+        }
 
         stage('Terraform Plan') {
             steps {
