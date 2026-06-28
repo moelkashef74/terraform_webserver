@@ -86,15 +86,15 @@ pipeline {
 
     emailext(
         to: 'mhmdalsyd2015@gmail.com',
-        subject: "Build Failed: $${env.JOB_NAME}",
-        body: """Job: $${env.JOB_NAME}
+        subject: "Build Failed: ${env.JOB_NAME}",
+        body: """Job: ${env.JOB_NAME}
 
-Build Number: $${env.BUILD_NUMBER}
+Build Number: ${env.BUILD_NUMBER}
 
 Status: FAILED
 
 Build URL:
-$${env.BUILD_URL}
+${env.BUILD_URL}
 """
     )
 
