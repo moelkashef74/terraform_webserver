@@ -1,9 +1,9 @@
 module "network" {
   source           = "./network"
-  vpc_cidr_block   = "10.0.0.0/16"
+  vpc_cidr_block   = var.vpc_cidr_block
   region           = "us-east-1"
-  pub_cidr_blocks  = ["10.0.1.0/24", "10.0.3.0/24"]
-  priv_cidr_blocks = ["10.0.2.0/24", "10.0.4.0/24"]
+  pub_cidr_blocks  = var.pub_cidr_blocks
+  priv_cidr_blocks = var.priv_cidr_blocks
   azs              = ["us-east-1a", "us-east-1b"]
 }
 
